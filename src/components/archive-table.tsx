@@ -1,12 +1,15 @@
 import type { FileData } from "@/types/HarfListResponse"
 import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { Copy, Download, File, Mic, Trash2 } from "lucide-react";
+import { AlignRight, ChevronLeft, ChevronRight, Clock4, Copy, Download, File, Mic, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { format } from 'date-fns-jalali';
 import { formatDuration } from "@/utils/formatDuration";
 import { useState } from "react";
-import UploadingFile from "./uploading-file";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { ScrollArea } from "./ui/scroll-area";
+import AudioPlayer from "./audio-player";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const columns: ColumnDef<FileData>[] = [
     {
@@ -54,9 +57,19 @@ const columns: ColumnDef<FileData>[] = [
         cell: () => {
             return (
                 <div>
-                    <Button className="hover:text-[#07B49B]" variant={"ghost"} size={"icon"}>
-                        <Download width={17} height={17} />
-                    </Button>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button className="hover:text-[#07B49B]" variant={"ghost"} size={"icon"}>
+                                <Download width={17} height={17} />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent
+                            side="bottom"
+                            className="bg-white  text-[#000000B2] font-iranyekan-light shadow-lg rounded-[10px] px-4 py-2 border border-gray-100"
+                        >
+                            <p>3.7 مگابایت</p>
+                        </TooltipContent>
+                    </Tooltip>
                     <Button className="hover:text-[#07B49B]" variant={"ghost"} size={"icon"}>
                         <File width={17} height={17} className="hover:text-[#07B49B]" />
                     </Button>
@@ -214,12 +227,13 @@ const files: FileData[] = [{
 
 function ArchiveTable() {
     const [expandedRows, setExpandedRows] = useState({});
-    console.log(expandedRows)
 
     const table = useReactTable({
         data: files,
+        rowCount: files.length,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        manualPagination: true,
         state: {
             expanded: expandedRows,
         },
@@ -228,70 +242,158 @@ function ArchiveTable() {
     })
 
     return (
-        <Table dir="rtl">
-            <TableHeader dir="rtl" className="text-right">
-                {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow dir="rtl" key={headerGroup.id} className="!border-b-[0px]">
-                        {headerGroup.headers.map((header) => {
-                            return (
-                                <TableHead dir="rtl" key={header.id} className="text-right pb-[35px] text-black text-base">
-                                    {header.isPlaceholder
-                                        ? null
-                                        : flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        )}
-                                </TableHead>
-                            )
-                        })}
-                    </TableRow>
-                ))}
-            </TableHeader>
-            <TableBody dir="rtl">
-                {table.getRowModel().rows?.length ? (
-                    table.getRowModel().rows.map((row) => (
-                        <>
-                            <TableRow
-                                className={` cursor-pointer hover:bg-gray-50`}
-                                dir="rtl"
-                                key={row.id}
-                                data-state={row.getIsSelected() && "selected"}
-                                onClick={() => row.toggleExpanded()}
-                            >
-                                {row.getVisibleCells().map((cell) => (
-                                    <TableCell className=" py-7 font-iranyekan-light text-black" dir="rtl" key={cell.id}>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
+        <>
+            <Table dir="rtl">
+                <TableHeader dir="rtl" className="text-right">
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <TableRow dir="rtl" key={headerGroup.id} className="!border-b-[0px]">
+                            {headerGroup.headers.map((header) => {
+                                return (
+                                    <TableHead dir="rtl" key={header.id} className="text-right pb-[35px] text-black text-base">
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
+                                    </TableHead>
+                                )
+                            })}
+                        </TableRow>
+                    ))}
+                </TableHeader>
+                <TableBody dir="rtl">
+                    {table.getRowModel().rows?.length ? (
+                        table.getRowModel().rows.map((row) => (
+                            <>
+                                <TableRow
+                                    className={`border-b-[0px] cursor-pointer   even:bg-[#FEFEFE] even:shadow-2xl rounded-2xl`}
+                                    dir="rtl"
+                                    key={row.id}
+                                    data-state={row.getIsSelected() && "selected"}
+                                    onClick={() => row.toggleExpanded()}
+                                >
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell className=" py-7 font-iranyekan-light text-black bg-white" dir="rtl" key={cell.id} >
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
 
-                            {row.getIsExpanded() && (
-                                <TableRow dir="rtl" className="!border-b-[0px]">
-                                    <TableCell colSpan={columns.length} className="p-0" dir="rtl">
-                                        <div className="bg-gray-50 p-4 border-gray-200">
-                                            <div className="space-y-3">
+                                {row.getIsExpanded() && (
+                                    <TableRow dir="rtl" className="!border-b-[0px] bg-white">
+                                        <TableCell colSpan={columns.length} className="p-0 bg-white" dir="rtl">
+                                            <div className="bg-gray-50 p-4 border-[#00BA9F] border rounded-[10px] ">
+                                                <section className="w-full pt-[22px]  px-12">
+                                                    <Tabs defaultValue="text" dir="rtl">
+                                                        <TabsList className="bg-white  w-full  flex justify-start items-start  rounded-b-[0px] pb-3.5">
+                                                            <div className="border-b">
+                                                                <TabsTrigger value="text" className="pb-[17px] data-[state=active]:bg-white shadow-none data-[state=active]:border-b-black rounded-b-[0px]  " >
+                                                                    <AlignRight />
+                                                                    متن ساده
+                                                                </TabsTrigger>
+                                                                <TabsTrigger value="speach" className="pb-[17px]  shadow-none data-[state=active]:border-b-black  data-[state=active]:border-b rounded-b-[0px] ">
+                                                                    <Clock4 />
+                                                                    متن زمان‌بندی شده
+                                                                </TabsTrigger>
+                                                            </div>
+                                                        </TabsList>
+                                                        <TabsContent value="text">
+                                                            <ScrollArea className="h-[300px] text-wrap font-iranyekan-light text-black p-4" dir="rtl">
+                                                                [با][---][---] [با] و[---][---] [با][---][---][---][---] کجایی تو [خوش] می دیدی من خسته شدم [ما را] [به] این [زودی] چه جوری شد [عشق شدی] به این است[---] [آخرش] سی با فکر [و] چقدر [نزار می خوام] که [چشم تو] [و با رفت][---][---][---][---][---][---][---][---] سخت [آرام] ولی ازت می خوام[---] بر نگردی هر کسی که به [تو] باشه[---] کاشکی تو منو [بردی] [که چشمک][---] با[---][---][---][---][---] [ابو][---] [با] و و و و و [او]
+                                                                [با][---][---] [با] و[---][---] [با][---][---][---][---] کجایی تو [خوش] می دیدی من خسته شدم [ما را] [به] این [زودی] چه جوری شد [عشق شدی] به این است[---] [آخرش] سی با فکر [و] چقدر [نزار می خوام] که [چشم تو] [و با رفت][---][---][---][---][---][---][---][---] سخت [آرام] ولی ازت می خوام[---] بر نگردی هر کسی که به [تو] باشه[---] کاشکی تو منو [بردی] [که چشمک][---] با[---][---][---][---][---] [ابو][---] [با] و و و و و [او]
+                                                                [با][---][---] [با] و[---][---] [با][---][---][---][---] کجایی تو [خوش] می دیدی من خسته شدم [ما را] [به] این [زودی] چه جوری شد [عشق شدی] به این است[---] [آخرش] سی با فکر [و] چقدر [نزار می خوام] که [چشم تو] [و با رفت][---][---][---][---][---][---][---][---] سخت [آرام] ولی ازت می خوام[---] بر نگردی هر کسی که به [تو] باشه[---] کاشکی تو منو [بردی] [که چشمک][---] با[---][---][---][---][---] [ابو][---] [با] و و و و و [او]
+                                                            </ScrollArea>
+                                                            <div className="flex justify-center items-center w-full">
+                                                                <AudioPlayer />
+                                                            </div>
+                                                        </TabsContent>
+                                                        <TabsContent value="speach">
+                                                            <ScrollArea className="h-[300px]  font-iranyekan-light text-black p-4" dir="rtl">
+                                                                <section className="w-full ">
+                                                                    <div className="odd:bg-white even:bg-[#F2F2F2] even:shadow-[#6363630D] rounded-3xl py-[19px] pr-[39px] flex justify-start items-start gap-x-[43px]">
+                                                                        <div className="gap-x-[17px] flex justify-center items-center">
+                                                                            <span>00:03</span>
+                                                                            <span>00:00</span>
+                                                                        </div>
+                                                                        <span>[با]</span>
+                                                                    </div>
+                                                                    <div className="odd:bg-white even:bg-[#F2F2F2] even:shadow-[#6363630D] rounded-3xl py-[19px] pr-[39px] flex justify-start items-start gap-x-[43px]">
+                                                                        <div className="gap-x-[17px] flex justify-center items-center">
+                                                                            <span>00:03</span>
+                                                                            <span>00:00</span>
+                                                                        </div>
+                                                                        <span>[با]</span>
+                                                                    </div>
+                                                                    <div className="odd:bg-white even:bg-[#F2F2F2] even:shadow-[#6363630D] rounded-3xl py-[19px] pr-[39px] flex justify-start items-start gap-x-[43px]">
+                                                                        <div className="gap-x-[17px] flex justify-center items-center">
+                                                                            <span>00:03</span>
+                                                                            <span>00:00</span>
+                                                                        </div>
+                                                                        <span>[با]</span>
+                                                                    </div>
+                                                                    <div className="odd:bg-white even:bg-[#F2F2F2] even:shadow-[#6363630D] rounded-3xl py-[19px] pr-[39px] flex justify-start items-start gap-x-[43px]">
+                                                                        <div className="gap-x-[17px] flex justify-center items-center">
+                                                                            <span>00:03</span>
+                                                                            <span>00:00</span>
+                                                                        </div>
+                                                                        <span>[با]</span>
+                                                                    </div>
+                                                                    <div className="odd:bg-white even:bg-[#F2F2F2] even:shadow-[#6363630D] rounded-3xl py-[19px] pr-[39px] flex justify-start items-start gap-x-[43px]">
+                                                                        <div className="gap-x-[17px] flex justify-center items-center">
+                                                                            <span>00:03</span>
+                                                                            <span>00:00</span>
+                                                                        </div>
+                                                                        <span>[با]</span>
+                                                                    </div>
+                                                                    <div className="odd:bg-white even:bg-[#F2F2F2] even:shadow-[#6363630D] rounded-3xl py-[19px] pr-[39px] flex justify-start items-start gap-x-[43px]">
+                                                                        <div className="gap-x-[17px] flex justify-center items-center">
+                                                                            <span>00:03</span>
+                                                                            <span>00:00</span>
+                                                                        </div>
+                                                                        <span>[با]</span>
+                                                                    </div>
+                                                                </section>
+                                                            </ScrollArea>
+                                                            <div className="flex justify-center items-center w-full">
+                                                                <AudioPlayer />
+                                                            </div>
+                                                        </TabsContent>
+                                                    </Tabs>
+                                                </section>
 
-                                                <div className="text-wrap">
-
-                                                    <UploadingFile />
-                                                </div>
 
                                             </div>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </>
-                    ))
-                ) : (
-                    <TableRow>
-                        <TableCell colSpan={columns.length} className="h-24 text-center">
-                            داده ای یافت نشد
-                        </TableCell>
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </>
+                        ))
+                    ) : (
+                        <TableRow>
+                            <TableCell colSpan={columns.length} className="h-24 text-center">
+                                داده ای یافت نشد
+                            </TableCell>
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+            <div className="flex justify-center items-center gap-x-3">
+                <Button size={"icon"} variant={"ghost"}>
+                    <ChevronRight />
+                </Button>
+                <div className="flex justify-center items-center gap-x-3">
+                    <Button size={"icon"} variant={"secondary"} className="text-sm rounded-full bg-[#07B49B] text-white hover:text-[#07B49B]">1</Button>
+                    <Button size={"icon"} variant={"secondary"} className="text-sm rounded-full bg-[#07B49B] text-white hover:text-[#07B49B]">1</Button>
+                    <Button size={"icon"} variant={"secondary"} className="text-sm rounded-full bg-[#07B49B] text-white hover:text-[#07B49B]">1</Button>
+                    <Button size={"icon"} variant={"secondary"} className="text-sm rounded-full bg-[#07B49B] text-white hover:text-[#07B49B]">1</Button>
+                    <Button size={"icon"} variant={"secondary"} className="text-sm rounded-full bg-[#07B49B] text-white hover:text-[#07B49B]">1</Button>
+                </div>
+                <Button size={"icon"} variant={"ghost"}>
+                    <ChevronLeft />
+                </Button>
+            </div>
+        </>
     )
 }
 
