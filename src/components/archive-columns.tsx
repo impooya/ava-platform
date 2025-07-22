@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { formatDuration } from "@/utils/formatDuration";
 import { copySegmentsToClipboard } from "@/utils/formatSegmentsForCopy";
+import { downloadDocx } from "@/utils/downloadDocx";
 
 
 
@@ -114,15 +115,6 @@ export const ArchiveColumns: ColumnDef<FileData>[] = [
                 }
             };
 
-            // const handleDownload = async () => {
-            //     const result = await downloadFile(row.original.url, row.original.filename);
-            //     if (result.success) {
-            //         toast.success('فایل با موفقیت دانلود شد');
-            //     } else {
-            //         toast.error(result.error || 'خطا در دانلود فایل');
-            //     }
-            // };
-
             const handleCopySegments = () => {
                 if (row.original.segments && row.original.segments.length > 0) {
                     copySegmentsToClipboard(row.original.segments, row.original.filename);
@@ -130,6 +122,15 @@ export const ArchiveColumns: ColumnDef<FileData>[] = [
                     toast.error('هیچ متن گفتاری برای این فایل موجود نیست');
                 }
             };
+
+            const handleDownloadSegments = () => {
+                if (row.original.segments && row.original.segments.length > 0) {
+                    downloadDocx(row.original.segments);
+                } else {
+                    toast.error('هیچ متن گفتاری برای این فایل موجود نیست');
+                }
+            };
+
 
             return (
                 <div>
@@ -149,7 +150,7 @@ export const ArchiveColumns: ColumnDef<FileData>[] = [
 
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button className="hover:text-[#07B49B]" variant={"ghost"} size={"icon"}>
+                            <Button className="hover:text-[#07B49B]" variant={"ghost"} size={"icon"} onClick={handleDownloadSegments}>
                                 <File width={17} height={17} />
                             </Button>
                         </TooltipTrigger>
@@ -157,7 +158,7 @@ export const ArchiveColumns: ColumnDef<FileData>[] = [
                             side="bottom"
                             className="bg-white text-[#000000B2] font-iranyekan-light shadow-lg rounded-[10px] px-4 py-2 border border-gray-100"
                         >
-                            <p>مشاهده فایل</p>
+                            <p>مشاهده فایل word</p>
                         </TooltipContent>
                     </Tooltip>
 
