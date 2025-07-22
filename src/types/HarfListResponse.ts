@@ -7,6 +7,7 @@ export interface Segment {
 export interface FileData {
   id: number; // Unique identifier for the video
   url: string; // URL to the video file
+  media_url: string; // URL to the video file
   duration: string; // Duration of the video in "0:01:8.000" format
   processed: string; // Timestamp of when the video was processed
   segments: Segment[]; // Array of segments containing start, end, and text

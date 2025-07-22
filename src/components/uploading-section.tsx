@@ -1,6 +1,18 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import Dropdown from "./dropdown"
-import UploadingFile from "./uploading-file"
+
+import axios from "axios";
+import useSWRMutation from "swr/mutation";
+import { toast } from "sonner";
+import { mutate } from "swr";
+import FileDetails from "./file-details";
+async function sendRequest(url: string, { arg }: { arg: { media_urls: string[] } }) {
+    return axios.post(url, arg, {
+        headers: {
+            Authorization: `${import.meta.env.VITE_API_TOKEN}`,
+        },
+    });
+}
 
 const options = [
     {
@@ -14,7 +26,40 @@ const options = [
 
 function UploadingSection() {
     const [showUploadingMethod, setShowUploadingMethod] = useState<"voice" | "file" | "link">("voice")
-    const [showAfterFileUploader, setShowAfterFileUploader] = useState<boolean>(false)
+    const [showAfterFileUploader, setShowAfterFileUploader] = useState<"voice" | "file" | "link" | "none">("none")
+    const { data, trigger, isMutating } = useSWRMutation(`/api/transcribe_files/`, sendRequest, {
+        onSuccess() {
+            toast.success("ارسال با موفقیت انجام شد")
+            mutate(() => true)
+        },
+        onError(err) {
+            toast.error(`${err}`)
+        },
+    })
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    const handleFileButtonClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(e)
+        // const file = e.target.files?.[0];
+        // const formData = new FormData()
+        // if (file) {
+        //     console.log(file)
+        //     formData.append("media_urls", file)
+        // }
+
+        trigger({
+            media_urls: ["https://i.ganjoor.net/a2/27065-fz-805148302.mp3"]
+        }).then((res) => {
+            if (res.status === 200) {
+                setShowAfterFileUploader("file")
+            }
+        })
+
+    };
     return (
         <section className="mt-[47px] flex flex-col justify-center items-start">
             <div className="flex justify-center items-center gap-x-2">
@@ -24,7 +69,10 @@ function UploadingSection() {
                     </svg>
                     ضبط صدا
                 </button>
-                <button onClick={() => setShowUploadingMethod("file")} className={`${showUploadingMethod === "file" ? "bg-[#118AD3] text-white font-iranyekan-regular text-base" : "hover:text-white hover:text-base hover:bg-[#118AD3] hover:font-iranyekan-regular hover:shadow-[#6363630D]"} font-iranyekan-light text-sm  transition-all rounded-t-[10px] py-[15px] px-7 flex justify-center items-center gap-x-1.5`}>
+
+                <button onClick={() => {
+                    setShowUploadingMethod("file")
+                }} className={`${showUploadingMethod === "file" ? "bg-[#118AD3] text-white font-iranyekan-regular text-base" : "hover:text-white hover:text-base hover:bg-[#118AD3] hover:font-iranyekan-regular hover:shadow-[#6363630D]"} font-iranyekan-light text-sm  transition-all rounded-t-[10px] py-[15px] px-7 flex justify-center items-center gap-x-1.5`}>
                     <svg className="w-[18.34px] h-[15px]">
                         <use href="#upload-icon" />
                     </svg>
@@ -52,16 +100,32 @@ function UploadingSection() {
                     ) : showUploadingMethod === "file" ? (
                         <>
                             {
-                                showAfterFileUploader ? (<UploadingFile />) : (<div className="flex justify-center flex-col items-center  w-full h-full">
-                                    <button onClick={() => setShowAfterFileUploader(prev => !prev)} className="cursor-pointer mb-2 w-[62px] h-[62px] flex justify-center items-center text-white rounded-full bg-[#118AD3] px-[16px] py-[15px]">
-                                        <svg className="w-[62px] h-[62px]">
-                                            <use href="#upload-icon" />
-                                        </svg>
-                                    </button>
-                                    <span className="w-[415px] text-center">
-                                        <p className="text-[#626262] font-iranyekan-light text-base ">برای بارگذاری فایل گفتاری (صوتی/تصویری)، دکمه را فشار دهید
-                                            متن پیاده شده آن، در اینجا ظاهر می شود</p>
-                                    </span>
+                                showAfterFileUploader === "file" ? (<FileDetails fileData={data?.data} startOver={setShowAfterFileUploader} />) : (<div className="flex justify-center flex-col items-center  w-full h-full">
+                                    <input hidden type="file" ref={fileInputRef} onChange={handleFileChange} />
+                                    {
+                                        isMutating ? (
+                                            <>
+
+                                                <span className="w-[415px] text-center">
+                                                    <p className="text-[#626262] font-iranyekan-light text-base ">در حال ارسال...</p>
+                                                </span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button onClick={() => {
+                                                    handleFileButtonClick()
+                                                }} className="cursor-pointer mb-2 w-[62px] h-[62px] flex justify-center items-center  px-[21px] py-[14px] text-white rounded-full bg-[#118AD3] ">
+                                                    <svg className="w-[62px] h-[62px]">
+                                                        <use href="#upload-icon" />
+                                                    </svg>
+                                                </button>
+                                                <span className="w-[415px] text-center">
+                                                    <p className="text-[#626262] font-iranyekan-light text-base ">برای بارگذاری فایل گفتاری (صوتی/تصویری)، دکمه را فشار دهید
+                                                        متن پیاده شده آن، در اینجا ظاهر می شود</p>
+                                                </span>
+                                            </>)
+                                    }
+
                                 </div>)
                             }
 
