@@ -183,6 +183,7 @@ export const ArchiveColumns: ColumnDef<FileData>[] = [
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button
+                                // @ts-expect-error type option not supported by TypeScript typings but works in browser
                                 onClick={() => table.options.meta?.removeRow?.(row.original.id)}
                                 className="hover:text-white hover:bg-[#DC3545] rounded-full"
                                 variant={"ghost"}

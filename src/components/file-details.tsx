@@ -24,7 +24,6 @@ export default function FileDetails({ fileData, startOver }: {
     const handleDownload = async () => {
         // const fileUrl = `${process.env.NEXT_PUBLIC_BASE_API_URL}${insuranceDetails?.contract_file}`;
         const fileUrl = `${fileData[0]?.media_url}`;
-
         try {
             const response = await fetch(fileUrl, {
                 // headers: {
@@ -42,7 +41,7 @@ export default function FileDetails({ fileData, startOver }: {
             const link = document.createElement("a");
             link.href = url;
             link.download =
-                fileData[0]?.filename?.split("/").pop() || "file";
+                fileData[0]?.media_url?.split("/").pop() || "file";
             document.body.appendChild(link);
             link.click();
             link.remove();
@@ -67,7 +66,7 @@ export default function FileDetails({ fileData, startOver }: {
                             متن زمان‌بندی شده
                         </TabsTrigger>
                     </div>
-                    <div className="flex justify-center items-center gap-x-5">
+                    <div className="flex justify-center items-center gap-x-1">
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Button onClick={handleDownload} className="hover:text-[#07B49B]" variant={"ghost"} size={"icon"}>

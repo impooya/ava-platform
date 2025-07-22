@@ -66,9 +66,17 @@ const AudioPlayer = ({ src }: { src: string }) => {
         if (audioRef.current) {
             audioRef.current.currentTime = 0;
             setCurrentTime(0);
-            // Optional: if you want to pause when reset
+            // Optional
             audioRef.current.pause();
             setIsPlaying(false);
+        }
+    };
+
+    const handleSeek = (value: number[]) => {
+        if (audioRef.current) {
+            const newTime = value[0];
+            audioRef.current.currentTime = newTime;
+            setCurrentTime(newTime);
         }
     };
 
@@ -85,7 +93,7 @@ const AudioPlayer = ({ src }: { src: string }) => {
             </div>
             <div className="flex justify-center items-center  gap-x-[7px]">
                 <span className="font-iranyekan-light text-[#3D3D3D]">{formatTime(currentTime)}</span>
-                <Slider min={0} max={duration} value={[currentTime]} step={1} className="w-[319px] [&>span]:bg-#C6C6C6 " />
+                <Slider min={0} max={duration} onValueChange={handleSeek} value={[currentTime]} step={1} className="w-[319px] [&>span]:bg-#C6C6C6 " />
             </div>
 
             <div className="flex justify-center items-center w-full gap-x-[7px]">
