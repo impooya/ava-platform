@@ -5,13 +5,12 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 
 
-const AudioPlayer = () => {
+const AudioPlayer = ({ src }: { src: string }) => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [volume, setVolume] = useState(1);
-
 
     useEffect(() => {
         const audio = audioRef.current;
@@ -98,7 +97,7 @@ const AudioPlayer = () => {
                     onValueChange={handleVolumeChange} className="w-[90px] [&>span]:bg-#C6C6C6 " />
                 <Volume2 className="text-[#3D3D3D]" floodColor="#3D3D3D" fill="#3D3D3D" size={16} />
             </div>
-            <audio ref={audioRef} src="/src/assets/simple-logo-149190.mp3" />
+            <audio ref={audioRef} src={src} />
         </div>
     );
 };
