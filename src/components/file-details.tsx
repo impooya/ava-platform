@@ -8,12 +8,16 @@ import { formatDuration } from "@/utils/formatDuration";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { copySegmentsToClipboard } from "@/utils/formatSegmentsForCopy";
 import { toast } from "sonner";
+import { timeToSeconds } from "@/utils/timeToSeconds";
+import type { RootState } from "@/store/store";
+import { useSelector } from "react-redux";
 
 
 export default function FileDetails({ fileData, startOver }: {
     fileData: FileData[],
     startOver?: (reset: "voice" | "file" | "link" | "none") => void
 }) {
+    const audioCurrentTime = useSelector((state: RootState) => state.speech.time)
     const handleCopySegments = () => {
         if (fileData[0]?.segments && fileData[0]?.segments.length > 0) {
             copySegmentsToClipboard(fileData[0]?.segments, fileData[0]?.filename);
@@ -38,6 +42,7 @@ export default function FileDetails({ fileData, startOver }: {
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
 
+
             const link = document.createElement("a");
             link.href = url;
             link.download =
@@ -51,6 +56,13 @@ export default function FileDetails({ fileData, startOver }: {
             toast.error("دانلود فایل با خطا مواجه شد.");
         }
     };
+
+    const isActiveSegment = (segStart: string, segEnd: string, currentTime: number): boolean => {
+        const startSeconds = timeToSeconds(segStart);
+        const endSeconds = timeToSeconds(segEnd);
+        return currentTime >= startSeconds && currentTime <= endSeconds;
+    };
+
 
     return (
         <section className="w-full pt-[22px]  px-[14px]">
@@ -107,31 +119,42 @@ export default function FileDetails({ fileData, startOver }: {
                 <TabsContent value="text">
                     <ScrollArea className="h-[300px]  font-iranyekan-light text-black p-4" dir="rtl">
                         {
-                            fileData[0]?.segments.map((seg) => (
-                                <p key={`${seg.start}-${seg.end}`}>{seg.text}</p>
-                            ))
+                            fileData[0]?.segments.map((seg) => {
+                                const isActive = isActiveSegment(seg.start, seg.end, audioCurrentTime);
+                                return (
+                                    <p key={`${seg.start}-${seg.end}`} className={`
+                                            ${isActive
+                                            ? 'text-[#FF1654]  font-iranyekan-medium'
+                                            : ''
+                                        }
+                                    transition-all duration-300 mb-2
+                                `}>{seg.text}</p>)
+                            })
                         }
                     </ScrollArea>
                     <div className="flex justify-center items-center w-full">
-                        <AudioPlayer src={fileData[0]?.media_url} />
+                        <AudioPlayer audioId={`${fileData[0].filename}`} src={fileData[0]?.media_url} thumbColor="#FF1654" rangeColor="#FF1654" />
                     </div>
                 </TabsContent>
                 <TabsContent value="speach">
                     <ScrollArea className="h-[300px]  font-iranyekan-light text-black p-4" dir="rtl">
                         <section className="w-full ">
-                            {fileData[0]?.segments.map((seg) => (
-                                <div key={`${seg.start}-${seg.end}`} className="odd:bg-white even:bg-[#F2F2F2] even:shadow-[#6363630D] rounded-3xl py-[19px] pr-[39px] flex justify-start items-start gap-x-[43px]">
-                                    <div className="gap-x-[17px] flex justify-center items-center">
-                                        <span>{formatDuration(seg.start)}</span>
-                                        <span>{formatDuration(seg.end)}</span>
-                                    </div>
-                                    <span>{seg.text}</span>
-                                </div>
-                            ))}
+
+                            {fileData[0]?.segments.map((seg) => {
+                                const isActive = isActiveSegment(seg.start, seg.end, audioCurrentTime);
+                                return (
+                                    <div key={`${seg.start}-${seg.end}`} className="odd:bg-white even:bg-[#F2F2F2] even:shadow-[#6363630D] rounded-3xl py-[19px] pr-[39px] flex justify-start items-start gap-x-[43px]">
+                                        <div className="gap-x-[17px] flex justify-center items-center">
+                                            <span className={`${isActive ? 'text-[#FF1654]  font-iranyekan-medium' : ''} transition-all duration-300 `}>{formatDuration(seg.start)}</span>
+                                            <span className={`${isActive ? 'text-[#FF1654]  font-iranyekan-medium' : ''} transition-all duration-300 `}>{formatDuration(seg.end)}</span>
+                                        </div>
+                                        <span className={`${isActive ? 'text-[#FF1654]  font-iranyekan-medium' : ''} transition-all duration-300 `}>{seg.text}</span>
+                                    </div>)
+                            })}
                         </section>
                     </ScrollArea>
                     <div className="flex justify-center items-center w-full">
-                        <AudioPlayer src={fileData[0]?.media_url} />
+                        <AudioPlayer audioId={`${fileData[0].filename}`} src={fileData[0]?.media_url} thumbColor="#FF1654" rangeColor="#FF1654" />
                     </div>
                 </TabsContent>
             </Tabs>

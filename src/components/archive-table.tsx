@@ -12,6 +12,9 @@ import useSWR, { mutate } from 'swr'
 import { ArchiveColumns } from "./archive-columns";
 import { toast } from "sonner";
 import useSWRMutation from 'swr/mutation'
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
+import { timeToSeconds } from "@/utils/timeToSeconds";
 
 const fetcher = (url: string) =>
     axios(url, {
@@ -38,7 +41,8 @@ function ArchiveTable() {
         pageIndex: 0,
         pageSize: 4,
     });
-
+    const audioCurrentTime = useSelector((state: RootState) => state.speech.time)
+    const audioCurrentId = useSelector((state: RootState) => state.speech.currentPlayingId)
     const { data: files, isLoading } = useSWR(`/api/requests/`, fetcher)
     const { trigger } = useSWRMutation(`/api/requests/`, deleteFile, {
         onSuccess() {
@@ -85,6 +89,11 @@ function ArchiveTable() {
         }
 
         return pageNumbers;
+    };
+    const isActiveSegment = (segStart: string, segEnd: string, currentTime: number): boolean => {
+        const startSeconds = timeToSeconds(segStart);
+        const endSeconds = timeToSeconds(segEnd);
+        return currentTime >= startSeconds && currentTime <= endSeconds;
     };
 
     return (
@@ -154,30 +163,67 @@ function ArchiveTable() {
                                                                 </TabsList>
                                                                 <TabsContent value="text">
                                                                     <ScrollArea className="h-[300px] text-wrap font-iranyekan-light text-base text-black p-4" dir="rtl">
-                                                                        {row.original.segments.map((seg) => (
-                                                                            <p key={`${seg.start}-${seg.end}`}>{seg.text}</p>
-                                                                        ))}
+                                                                        {row.original.segments.map((seg) => {
+                                                                            const isActive = isActiveSegment(seg.start, seg.end, audioCurrentTime);
+
+
+                                                                            return (
+                                                                                <p
+                                                                                    key={`${seg.start}-${seg.end}`}
+                                                                                    className={`
+                                                                                        ${isActive && row.original.id === Number(audioCurrentId)
+                                                                                            ? 'text-[#00B3A1]  font-iranyekan-medium'
+                                                                                            : ''
+                                                                                        }
+                                                                                        transition-all duration-300 mb-2
+                                                                                    `}
+                                                                                >
+                                                                                    {seg.text}
+                                                                                </p>
+                                                                            );
+                                                                        })}
                                                                     </ScrollArea>
                                                                     <div className="flex justify-center items-center w-full">
-                                                                        <AudioPlayer src={row.original.url} />
+                                                                        <AudioPlayer audioId={`${row.original.id}`} src={row.original.url} thumbColor="#00B3A1" rangeColor="#00B3A1" />
                                                                     </div>
                                                                 </TabsContent>
                                                                 <TabsContent value="speach">
                                                                     <ScrollArea className="h-[300px]  font-iranyekan-light text-black p-4" dir="rtl">
                                                                         <section className="w-full ">
-                                                                            {row.original.segments.map((seg) => (
-                                                                                <div key={`${seg.start}-${seg.end}`} className="odd:bg-white even:bg-[#F2F2F2] even:shadow-[#6363630D] rounded-3xl py-[19px] pr-[39px] flex justify-start items-start gap-x-[43px]">
-                                                                                    <div className="gap-x-[17px] flex justify-center items-center">
-                                                                                        <span>{formatDuration(seg.start)}</span>
-                                                                                        <span>{formatDuration(seg.end)}</span>
-                                                                                    </div>
-                                                                                    <span>{seg.text}</span>
-                                                                                </div>
-                                                                            ))}
+                                                                            {row.original.segments.map((seg) => {
+                                                                                const isActive = isActiveSegment(seg.start, seg.end, audioCurrentTime);
+                                                                                return (
+                                                                                    <div key={`${seg.start}-${seg.end}`} className="odd:bg-white even:bg-[#F2F2F2] even:shadow-[#6363630D] rounded-3xl py-[19px] pr-[39px] flex justify-start items-start gap-x-[43px]">
+                                                                                        <div className="gap-x-[17px] flex justify-center items-center">
+                                                                                            <span className={`
+                                                                                             ${isActive
+                                                                                                    ? 'text-[#00B3A1]  font-iranyekan-medium'
+                                                                                                    : ''
+                                                                                                }
+                                                                                            transition-all duration-300`}>{formatDuration(seg.start)}</span>
+                                                                                            <span
+                                                                                                className={`
+                                                                                                    ${isActive
+                                                                                                        ? 'text-[#00B3A1]  font-iranyekan-medium'
+                                                                                                        : ''
+                                                                                                    }
+                                                                                                     transition-all duration-300
+                                                                                                `}
+                                                                                            >{formatDuration(seg.end)}</span>
+                                                                                        </div>
+                                                                                        <span className={`
+                                                                                                    ${isActive
+                                                                                                ? 'text-[#00B3A1]  font-iranyekan-medium'
+                                                                                                : ''
+                                                                                            }
+                                                                                                     transition-all duration-300
+                                                                                                `}>{seg.text}</span>
+                                                                                    </div>)
+                                                                            })}
                                                                         </section>
                                                                     </ScrollArea>
                                                                     <div className="flex justify-center items-center w-full">
-                                                                        <AudioPlayer src={row.original.url} />
+                                                                        <AudioPlayer audioId={`${row.original.id}`} src={row.original.url} thumbColor="#00B3A1" rangeColor="#00B3A1" />
                                                                     </div>
                                                                 </TabsContent>
                                                             </Tabs>

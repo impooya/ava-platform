@@ -131,7 +131,6 @@ export const ArchiveColumns: ColumnDef<FileData>[] = [
                 }
             };
 
-
             return (
                 <div>
                     <Tooltip>

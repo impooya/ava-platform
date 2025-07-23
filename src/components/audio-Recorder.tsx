@@ -63,7 +63,9 @@ const AudioRecorder = () => {
             const audioUrl = URL.createObjectURL(audioBlob);
             setAudio(audioUrl);
             setAudioChunks([]);
+            console.log(audioUrl)
         };
+
     };
 
 
@@ -139,7 +141,7 @@ const AudioRecorder = () => {
                             <Disc3 />
                         </Button>
                         <div className="mb-4">
-                            <AudioPlayer src={audio} />
+                            <AudioPlayer src={audio} thumbColor="#00B3A1" rangeColor="#00B3A1" />
                         </div>
                         <a download href={audio} className="text-[#00B3A1] underline mb-4">
                             دانلود فایل ضبط شده
