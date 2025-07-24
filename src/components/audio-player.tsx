@@ -155,6 +155,7 @@ const AudioPlayer = ({ src, thumbColor, rangeColor, audioId }: {
             </div>
 
             <div className="flex justify-center items-center w-full gap-x-[7px]">
+
                 <Slider
                     className="relative flex w-[90px] touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col"
                     defaultValue={[1]}

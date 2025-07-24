@@ -1,21 +1,18 @@
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { AlignRight, ChevronLeft, ChevronRight, Clock4 } from "lucide-react";
+import { ChevronLeft, ChevronRight, } from "lucide-react";
 import { Button } from "./ui/button";
-import { formatDuration } from "@/utils/formatDuration";
+
 import React, { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { ScrollArea } from "./ui/scroll-area";
-import AudioPlayer from "./audio-player";
+
 import axios from 'axios';
 import useSWR, { mutate } from 'swr'
 import { ArchiveColumns } from "./archive-columns";
 import { toast } from "sonner";
 import useSWRMutation from 'swr/mutation'
-import { useSelector } from "react-redux";
-import type { RootState } from "@/store/store";
-import { timeToSeconds } from "@/utils/timeToSeconds";
+import { ExpandedRowContent } from "./expanded-row-content";
 
+const baseURL = import.meta.env.VITE_API_BASE;
 const fetcher = (url: string) =>
     axios(url, {
         withCredentials: true,
@@ -32,17 +29,15 @@ const deleteFile = async (url: string, { arg }: { arg: { id: string | number } }
     });
 };
 
-
 function ArchiveTable() {
     const [expandedRows, setExpandedRows] = useState({});
     const [pagination, setPagination] = useState({
         pageIndex: 0,
         pageSize: 4,
     });
-    const audioCurrentTime = useSelector((state: RootState) => state.speech.time)
-    const audioCurrentId = useSelector((state: RootState) => state.speech.currentPlayingId)
-    const { data: files, isLoading } = useSWR(`/api/requests/`, fetcher)
-    const { trigger } = useSWRMutation(`/api/requests/`, deleteFile, {
+
+    const { data: files, isLoading } = useSWR(`${baseURL}/requests/`, fetcher)
+    const { trigger } = useSWRMutation(`${baseURL}/requests/`, deleteFile, {
         onSuccess() {
             toast.success("حذف با موفقیت انجام شد")
             mutate(() => true)
@@ -88,11 +83,8 @@ function ArchiveTable() {
 
         return pageNumbers;
     };
-    const isActiveSegment = (segStart: string, segEnd: string, currentTime: number): boolean => {
-        const startSeconds = timeToSeconds(segStart);
-        const endSeconds = timeToSeconds(segEnd);
-        return currentTime >= startSeconds && currentTime <= endSeconds;
-    };
+
+
 
     return (
         <>
@@ -125,7 +117,7 @@ function ArchiveTable() {
                             </TableRow>
                         ) : (
                             table.getRowModel().rows?.length ? (
-                                table.getRowModel().rows.map((row) => (
+                                table.getRowModel().rows?.map((row) => (
                                     <React.Fragment key={row.id}>
 
                                         <TableRow
@@ -146,7 +138,7 @@ function ArchiveTable() {
                                             row.getIsExpanded() && (
                                                 <TableRow dir="rtl" key={`${row.id}-expanded`} className="!border-b-[0px] bg-white">
                                                     <TableCell colSpan={ArchiveColumns.length} className="p-0 bg-white" dir="rtl">
-                                                        <div className="bg-gray-50 p-4 border-[#00BA9F] border rounded-[10px] ">
+                                                        {/* <div className="bg-gray-50 p-4 border-[#00BA9F] border rounded-[10px] ">
                                                             <section className="w-full pt-[22px]  px-12">
                                                                 <Tabs defaultValue="text" dir="rtl">
                                                                     <TabsList className="bg-white  w-full  flex justify-start items-start  rounded-b-[0px] pb-3.5">
@@ -163,7 +155,7 @@ function ArchiveTable() {
                                                                     </TabsList>
                                                                     <TabsContent value="text">
                                                                         <ScrollArea className="h-[300px] text-wrap font-iranyekan-light text-base text-black p-4" dir="rtl">
-                                                                            {row.original.segments.map((seg) => {
+                                                                            {row?.original.segments.map((seg) => {
                                                                                 const isActive = isActiveSegment(seg.start, seg.end, audioCurrentTime);
 
 
@@ -228,7 +220,8 @@ function ArchiveTable() {
                                                                     </TabsContent>
                                                                 </Tabs>
                                                             </section>
-                                                        </div>
+                                                        </div> */}
+                                                        <ExpandedRowContent row={row} />
                                                     </TableCell>
                                                 </TableRow>
                                             )

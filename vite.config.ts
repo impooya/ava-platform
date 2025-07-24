@@ -17,6 +17,7 @@ export default defineConfig({
         target: "https://harf.roshan-ai.ir",
         changeOrigin: true,
         secure: false,
+        // rewrite: (path) => path.replace(/^\/api/, ""),
         headers: {
           Authorization: "Token a85d08400c622b50b18b61e239b9903645297196",
         },

@@ -14,6 +14,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Link } from "lucide-react";
 import AudioRecorder from "./audio-Recorder";
+const baseURL = import.meta.env.VITE_API_BASE;
 async function sendFileRequest(url: string, { arg }: { arg: FormData }) {
     return axios.post(url, arg);
 }
@@ -35,7 +36,7 @@ const options = [
 function UploadingSection() {
     const [showUploadingMethod, setShowUploadingMethod] = useState<"voice" | "file" | "link">("voice")
     const [showAfterFileUploader, setShowAfterFileUploader] = useState<"voice" | "file" | "link" | "none">("none")
-    const { data: fileDetails, trigger: fileTrigger, isMutating: fileMutating } = useSWRMutation(`/api/transcribe_files/`, sendFileRequest, {
+    const { data: fileDetails, trigger: fileTrigger, isMutating: fileMutating } = useSWRMutation(`${baseURL}/transcribe_files/`, sendFileRequest, {
         onSuccess() {
             toast.success("ارسال با موفقیت انجام شد")
             mutate(() => true)
@@ -45,7 +46,7 @@ function UploadingSection() {
         },
     })
 
-    const { data: linkDetails, trigger: linkTrigger, isMutating: linkMutating } = useSWRMutation(`/api/transcribe_files/`, sendLinkRequest, {
+    const { data: linkDetails, trigger: linkTrigger, isMutating: linkMutating } = useSWRMutation(`${baseURL}/transcribe_files/`, sendLinkRequest, {
         onSuccess() {
             toast.success("ارسال با موفقیت انجام شد")
             mutate(() => true)

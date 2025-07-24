@@ -10,6 +10,65 @@ import { Button } from "./ui/button";
 import { formatDuration } from "@/utils/formatDuration";
 import { copySegmentsToClipboard } from "@/utils/formatSegmentsForCopy";
 import { downloadDocx } from "@/utils/downloadDocx";
+const handleDownload = async (url: string, fileName: string) => {
+    const fileUrl = `${url}`;
+
+    try {
+        const response = await fetch(fileUrl, {
+            // headers: {
+            //     Authorization: `${process.env.NEXT_PUBLIC_BASE_API_TOKEN}`,
+            // },
+        });
+
+        if (!response.ok) {
+            throw new Error("خطا در دانلود فایل");
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download =
+            fileName?.split("/").pop() || "file";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error(error);
+        toast.error("دانلود فایل با خطا مواجه شد.");
+    }
+};
+const getSize = async (url: string) => {
+    const fileUrl = `${url}`;
+
+    try {
+
+        const response = await fetch(fileUrl, {
+            // headers: {
+            //     Authorization: `${process.env.NEXT_PUBLIC_BASE_API_TOKEN}`, // اگر نیاز هست
+            // },
+        });
+
+        if (!response.ok) {
+            throw new Error("خطا در دانلود فایل");
+        }
+
+        const blob = await response.blob();
+
+
+        const sizeInMB = (blob.size / (1024 * 1024)).toFixed(2);
+
+        return sizeInMB
+
+    } catch {
+        return "unknown"
+    }
+
+}
 
 
 
@@ -88,37 +147,6 @@ export const ArchiveColumns: ColumnDef<FileData>[] = [
     {
         id: "actions",
         cell: ({ row, table }) => {
-            const handleDownload = async () => {
-                // const fileUrl = `${process.env.NEXT_PUBLIC_BASE_API_URL}${insuranceDetails?.contract_file}`;
-                const fileUrl = `${row.original.url}`;
-
-                try {
-                    const response = await fetch(fileUrl, {
-                        // headers: {
-                        //     Authorization: `${process.env.NEXT_PUBLIC_BASE_API_TOKEN}`, // اگر نیاز هست
-                        // },
-                    });
-
-                    if (!response.ok) {
-                        throw new Error("خطا در دانلود فایل");
-                    }
-
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-
-                    const link = document.createElement("a");
-                    link.href = url;
-                    link.download =
-                        row.original.filename?.split("/").pop() || "file";
-                    document.body.appendChild(link);
-                    link.click();
-                    link.remove();
-                    window.URL.revokeObjectURL(url);
-                } catch (error) {
-                    console.error(error);
-                    toast.error("دانلود فایل با خطا مواجه شد.");
-                }
-            };
 
             const handleCopySegments = () => {
                 if (row.original.segments && row.original.segments.length > 0) {
@@ -136,11 +164,13 @@ export const ArchiveColumns: ColumnDef<FileData>[] = [
                 }
             };
 
+
+
             return (
                 <div>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button onClick={handleDownload} className="hover:text-[#07B49B]" variant={"ghost"} size={"icon"}>
+                            <Button onClick={() => { handleDownload(row.original.url, row.original.filename) }} className="hover:text-[#07B49B]" variant={"ghost"} size={"icon"}>
                                 <Download width={17} height={17} />
                             </Button>
                         </TooltipTrigger>
@@ -148,7 +178,7 @@ export const ArchiveColumns: ColumnDef<FileData>[] = [
                             side="bottom"
                             className="bg-white text-[#000000B2] font-iranyekan-light shadow-lg rounded-[10px] px-4 py-2 border border-gray-100"
                         >
-                            <p>دانلود فایل</p>
+                            <p>{getSize(row.original.url)} مگابایت</p>
                         </TooltipContent>
                     </Tooltip>
 
