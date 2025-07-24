@@ -129,109 +129,112 @@ function ArchiveTable() {
                             table.getRowModel().rows?.length ? (
                                 table.getRowModel().rows.map((row) => (
                                     <React.Fragment key={row.id}>
+
                                         <TableRow
-                                            className={`border-b-[0px] cursor-pointer   even:bg-[#FEFEFE] even:shadow-2xl rounded-2xl`}
+                                            className={`w-full border-b-[0px] cursor-pointer   even:bg-[#FEFEFE]   rounded-2xl`}
                                             dir="rtl"
                                             key={`${row.id}-main`}
                                             data-state={row.getIsSelected() && "selected"}
                                             onClick={() => row.toggleExpanded()}
                                         >
                                             {row.getVisibleCells().map((cell) => (
-                                                <TableCell className=" py-7 font-iranyekan-light text-black bg-white" dir="rtl" key={cell.id} >
+                                                <TableCell className=" py-7 font-iranyekan-light text-black bg-white " dir="rtl" key={cell.id} >
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </TableCell>
                                             ))}
                                         </TableRow>
 
-                                        {row.getIsExpanded() && (
-                                            <TableRow dir="rtl" key={`${row.id}-expanded`} className="!border-b-[0px] bg-white">
-                                                <TableCell colSpan={ArchiveColumns.length} className="p-0 bg-white" dir="rtl">
-                                                    <div className="bg-gray-50 p-4 border-[#00BA9F] border rounded-[10px] ">
-                                                        <section className="w-full pt-[22px]  px-12">
-                                                            <Tabs defaultValue="text" dir="rtl">
-                                                                <TabsList className="bg-white  w-full  flex justify-start items-start  rounded-b-[0px] pb-3.5">
-                                                                    <div className="border-b">
-                                                                        <TabsTrigger value="text" className="pb-[17px] data-[state=active]:bg-white shadow-none data-[state=active]:border-b-black rounded-b-[0px]  " >
-                                                                            <AlignRight />
-                                                                            متن ساده
-                                                                        </TabsTrigger>
-                                                                        <TabsTrigger value="speach" className="pb-[17px]  shadow-none data-[state=active]:border-b-black  data-[state=active]:border-b rounded-b-[0px] ">
-                                                                            <Clock4 />
-                                                                            متن زمان‌بندی شده
-                                                                        </TabsTrigger>
-                                                                    </div>
-                                                                </TabsList>
-                                                                <TabsContent value="text">
-                                                                    <ScrollArea className="h-[300px] text-wrap font-iranyekan-light text-base text-black p-4" dir="rtl">
-                                                                        {row.original.segments.map((seg) => {
-                                                                            const isActive = isActiveSegment(seg.start, seg.end, audioCurrentTime);
-
-
-                                                                            return (
-                                                                                <p
-                                                                                    key={`${seg.start}-${seg.end}`}
-                                                                                    className={`
-                                                                                        ${isActive && row.original.id === Number(audioCurrentId)
-                                                                                            ? 'text-[#00B3A1]  font-iranyekan-medium'
-                                                                                            : ''
-                                                                                        }
-                                                                                        transition-all duration-300 mb-2
-                                                                                    `}
-                                                                                >
-                                                                                    {seg.text}
-                                                                                </p>
-                                                                            );
-                                                                        })}
-                                                                    </ScrollArea>
-                                                                    <div className="flex justify-center items-center w-full">
-                                                                        <AudioPlayer audioId={`${row.original.id}`} src={row.original.url} thumbColor="#00B3A1" rangeColor="#00B3A1" />
-                                                                    </div>
-                                                                </TabsContent>
-                                                                <TabsContent value="speach">
-                                                                    <ScrollArea className="h-[300px]  font-iranyekan-light text-black p-4" dir="rtl">
-                                                                        <section className="w-full ">
+                                        {
+                                            row.getIsExpanded() && (
+                                                <TableRow dir="rtl" key={`${row.id}-expanded`} className="!border-b-[0px] bg-white">
+                                                    <TableCell colSpan={ArchiveColumns.length} className="p-0 bg-white" dir="rtl">
+                                                        <div className="bg-gray-50 p-4 border-[#00BA9F] border rounded-[10px] ">
+                                                            <section className="w-full pt-[22px]  px-12">
+                                                                <Tabs defaultValue="text" dir="rtl">
+                                                                    <TabsList className="bg-white  w-full  flex justify-start items-start  rounded-b-[0px] pb-3.5">
+                                                                        <div className="border-b">
+                                                                            <TabsTrigger value="text" className="pb-[17px] data-[state=active]:bg-white shadow-none data-[state=active]:border-b-black rounded-b-[0px]  " >
+                                                                                <AlignRight />
+                                                                                متن ساده
+                                                                            </TabsTrigger>
+                                                                            <TabsTrigger value="speach" className="pb-[17px]  shadow-none data-[state=active]:border-b-black  data-[state=active]:border-b rounded-b-[0px] ">
+                                                                                <Clock4 />
+                                                                                متن زمان‌بندی شده
+                                                                            </TabsTrigger>
+                                                                        </div>
+                                                                    </TabsList>
+                                                                    <TabsContent value="text">
+                                                                        <ScrollArea className="h-[300px] text-wrap font-iranyekan-light text-base text-black p-4" dir="rtl">
                                                                             {row.original.segments.map((seg) => {
                                                                                 const isActive = isActiveSegment(seg.start, seg.end, audioCurrentTime);
+
+
                                                                                 return (
-                                                                                    <div key={`${seg.start}-${seg.end}`} className="odd:bg-white even:bg-[#F2F2F2] even:shadow-[#6363630D] rounded-3xl py-[19px] pr-[39px] flex justify-start items-start gap-x-[43px]">
-                                                                                        <div className="gap-x-[17px] flex justify-center items-center">
-                                                                                            <span className={`
-                                                                                             ${isActive
-                                                                                                    ? 'text-[#00B3A1]  font-iranyekan-medium'
-                                                                                                    : ''
-                                                                                                }
-                                                                                            transition-all duration-300`}>{formatDuration(seg.start)}</span>
-                                                                                            <span
-                                                                                                className={`
-                                                                                                    ${isActive
-                                                                                                        ? 'text-[#00B3A1]  font-iranyekan-medium'
-                                                                                                        : ''
-                                                                                                    }
-                                                                                                     transition-all duration-300
-                                                                                                `}
-                                                                                            >{formatDuration(seg.end)}</span>
-                                                                                        </div>
-                                                                                        <span className={`
-                                                                                                    ${isActive
+                                                                                    <p
+                                                                                        key={`${seg.start}-${seg.end}`}
+                                                                                        className={`
+                                                                                        ${isActive && row.original.id === Number(audioCurrentId)
                                                                                                 ? 'text-[#00B3A1]  font-iranyekan-medium'
                                                                                                 : ''
                                                                                             }
+                                                                                        transition-all duration-300 mb-2
+                                                                                    `}
+                                                                                    >
+                                                                                        {seg.text}
+                                                                                    </p>
+                                                                                );
+                                                                            })}
+                                                                        </ScrollArea>
+                                                                        <div className="flex justify-center items-center w-full">
+                                                                            <AudioPlayer audioId={`${row.original.id}`} src={row.original.url} thumbColor="#00B3A1" rangeColor="#00B3A1" />
+                                                                        </div>
+                                                                    </TabsContent>
+                                                                    <TabsContent value="speach">
+                                                                        <ScrollArea className="h-[300px]  font-iranyekan-light text-black p-4" dir="rtl">
+                                                                            <section className="w-full ">
+                                                                                {row.original.segments.map((seg) => {
+                                                                                    const isActive = isActiveSegment(seg.start, seg.end, audioCurrentTime);
+                                                                                    return (
+                                                                                        <div key={`${seg.start}-${seg.end}`} className="odd:bg-white even:bg-[#F2F2F2] even:shadow-[#6363630D] rounded-3xl py-[19px] pr-[39px] flex justify-start items-start gap-x-[43px]">
+                                                                                            <div className="gap-x-[17px] flex justify-center items-center">
+                                                                                                <span className={`
+                                                                                             ${isActive
+                                                                                                        ? 'text-[#00B3A1]  font-iranyekan-medium'
+                                                                                                        : ''
+                                                                                                    }
+                                                                                            transition-all duration-300`}>{formatDuration(seg.start)}</span>
+                                                                                                <span
+                                                                                                    className={`
+                                                                                                    ${isActive
+                                                                                                            ? 'text-[#00B3A1]  font-iranyekan-medium'
+                                                                                                            : ''
+                                                                                                        }
+                                                                                                     transition-all duration-300
+                                                                                                `}
+                                                                                                >{formatDuration(seg.end)}</span>
+                                                                                            </div>
+                                                                                            <span className={`
+                                                                                                    ${isActive
+                                                                                                    ? 'text-[#00B3A1]  font-iranyekan-medium'
+                                                                                                    : ''
+                                                                                                }
                                                                                                      transition-all duration-300
                                                                                                 `}>{seg.text}</span>
-                                                                                    </div>)
-                                                                            })}
-                                                                        </section>
-                                                                    </ScrollArea>
-                                                                    <div className="flex justify-center items-center w-full">
-                                                                        <AudioPlayer audioId={`${row.original.id}`} src={row.original.url} thumbColor="#00B3A1" rangeColor="#00B3A1" />
-                                                                    </div>
-                                                                </TabsContent>
-                                                            </Tabs>
-                                                        </section>
-                                                    </div>
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
+                                                                                        </div>)
+                                                                                })}
+                                                                            </section>
+                                                                        </ScrollArea>
+                                                                        <div className="flex justify-center items-center w-full">
+                                                                            <AudioPlayer audioId={`${row.original.id}`} src={row.original.url} thumbColor="#00B3A1" rangeColor="#00B3A1" />
+                                                                        </div>
+                                                                    </TabsContent>
+                                                                </Tabs>
+                                                            </section>
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            )
+                                        }
                                     </React.Fragment>
                                 ))
                             ) : (
@@ -244,41 +247,44 @@ function ArchiveTable() {
                         )
                     }
                 </TableBody>
-            </Table>
+            </Table >
 
             {/* Pagination Controls */}
-            <div className="flex justify-center items-center gap-x-3 mt-4">
+            < div className="flex justify-center items-center gap-x-3 mt-4" >
                 {/* Previous Button */}
-                <Button
+                < Button
                     size={"icon"}
                     variant={"ghost"}
-                    onClick={() => table.previousPage()}
+                    onClick={() => table.previousPage()
+                    }
                     disabled={!table.getCanPreviousPage()}
                     className="disabled:opacity-50"
                 >
                     <ChevronRight />
-                </Button>
+                </Button >
 
                 {/* Page Numbers */}
-                <div className="flex justify-center items-center gap-x-3">
-                    {generatePageNumbers().map((pageNumber) => (
-                        <Button
-                            key={pageNumber}
-                            size={"icon"}
-                            variant={"secondary"}
-                            className={`text-sm rounded-full ${table.getState().pagination.pageIndex === pageNumber
-                                ? "bg-[#07B49B] text-white"
-                                : "bg-gray-200 text-gray-700 hover:bg-[#07B49B] hover:text-white"
-                                }`}
-                            onClick={() => table.setPageIndex(pageNumber)}
-                        >
-                            {pageNumber + 1}
-                        </Button>
-                    ))}
-                </div>
+                < div className="flex justify-center items-center gap-x-3" >
+                    {
+                        generatePageNumbers().map((pageNumber) => (
+                            <Button
+                                key={pageNumber}
+                                size={"icon"}
+                                variant={"secondary"}
+                                className={`text-sm rounded-full ${table.getState().pagination.pageIndex === pageNumber
+                                    ? "bg-[#07B49B] text-white"
+                                    : "bg-gray-200 text-gray-700 hover:bg-[#07B49B] hover:text-white"
+                                    }`}
+                                onClick={() => table.setPageIndex(pageNumber)}
+                            >
+                                {pageNumber + 1}
+                            </Button>
+                        ))
+                    }
+                </div >
 
                 {/* Next Button */}
-                <Button
+                < Button
                     size={"icon"}
                     variant={"ghost"}
                     onClick={() => table.nextPage()}
@@ -286,8 +292,8 @@ function ArchiveTable() {
                     className="disabled:opacity-50"
                 >
                     <ChevronLeft />
-                </Button>
-            </div>
+                </Button >
+            </div >
 
         </>
     )

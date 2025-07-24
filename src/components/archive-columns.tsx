@@ -43,6 +43,11 @@ export const ArchiveColumns: ColumnDef<FileData>[] = [
     {
         accessorKey: "filename",
         header: "نام فایل",
+        cell: ({ row }) => {
+            return (
+                <span dir="ltr">{row.original.filename}</span>
+            )
+        }
     },
     {
         accessorKey: "processed",
