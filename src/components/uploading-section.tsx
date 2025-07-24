@@ -15,19 +15,11 @@ import { Button } from "./ui/button";
 import { Link } from "lucide-react";
 import AudioRecorder from "./audio-Recorder";
 async function sendFileRequest(url: string, { arg }: { arg: FormData }) {
-    return axios.post(url, arg, {
-        headers: {
-            Authorization: `${import.meta.env.VITE_API_TOKEN}`,
-        },
-    });
+    return axios.post(url, arg);
 }
 
 async function sendLinkRequest(url: string, { arg }: { arg: { media_urls: string[] } }) {
-    return axios.post(url, arg, {
-        headers: {
-            Authorization: `${import.meta.env.VITE_API_TOKEN}`,
-        },
-    });
+    return axios.post(url, arg);
 }
 
 const options = [

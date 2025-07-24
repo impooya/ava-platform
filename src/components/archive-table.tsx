@@ -21,7 +21,6 @@ const fetcher = (url: string) =>
         withCredentials: true,
         headers: {
             "Content-Type": "application/json",
-            Authorization: `${import.meta.env.VITE_API_TOKEN}`,
         },
     }).then((r) => r.data);
 
@@ -29,7 +28,6 @@ const deleteFile = async (url: string, { arg }: { arg: { id: string | number } }
     return axios.delete(`${url}${arg.id}/`, {
         headers: {
             "Content-Type": "application/json",
-            Authorization: `${import.meta.env.VITE_API_TOKEN}`,
         },
     });
 };
