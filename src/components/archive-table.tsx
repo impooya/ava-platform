@@ -18,6 +18,7 @@ const fetcher = (url: string) =>
         withCredentials: true,
         headers: {
             "Content-Type": "application/json",
+            Authorization: "Token a85d08400c622b50b18b61e239b9903645297196"
         },
     }).then((r) => r.data);
 

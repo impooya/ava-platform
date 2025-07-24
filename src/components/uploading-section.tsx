@@ -16,11 +16,19 @@ import { Link } from "lucide-react";
 import AudioRecorder from "./audio-Recorder";
 const baseURL = import.meta.env.VITE_API_BASE;
 async function sendFileRequest(url: string, { arg }: { arg: FormData }) {
-    return axios.post(url, arg);
+    return axios.post(url, arg, {
+        headers: {
+            Authorization: "Token a85d08400c622b50b18b61e239b9903645297196"
+        }
+    });
 }
 
 async function sendLinkRequest(url: string, { arg }: { arg: { media_urls: string[] } }) {
-    return axios.post(url, arg);
+    return axios.post(url, arg, {
+        headers: {
+            Authorization: "Token a85d08400c622b50b18b61e239b9903645297196"
+        }
+    });
 }
 
 const options = [
