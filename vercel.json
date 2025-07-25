@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://harf.roshan-ai.ir/api/:path*"
+    },
+    {
+      "source": "/api/:path*/",
+      "destination": "https://harf.roshan-ai.ir/api/:path*/"
+    }
+  ]
+}
