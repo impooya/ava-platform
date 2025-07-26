@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import useSWRMutation from 'swr/mutation'
 import { ExpandedRowContent } from "./expanded-row-content";
 
-// const baseURL = import.meta.env.VITE_API_BASE;
+const baseURL = import.meta.env.VITE_API_BASE;
 const fetcher = (url: string) =>
     axios(url, {
         withCredentials: true,
@@ -37,8 +37,8 @@ function ArchiveTable() {
         pageSize: 4,
     });
 
-    const { data: files, isLoading } = useSWR(`/api/requests/`, fetcher)
-    const { trigger } = useSWRMutation(`/api/requests/`, deleteFile, {
+    const { data: files, isLoading } = useSWR(`${baseURL}/requests/`, fetcher)
+    const { trigger } = useSWRMutation(`${baseURL}/requests/`, deleteFile, {
         onSuccess() {
             toast.success("حذف با موفقیت انجام شد")
             mutate(() => true)
