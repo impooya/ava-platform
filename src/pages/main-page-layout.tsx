@@ -9,7 +9,7 @@ function MainPageLayout() {
             <aside
                 className="w-[166px] rounded-tl-[10px] rounded-bl-[10px] h-full fixed right-0 top-0 "
                 style={{
-                    backgroundImage: "url('/src/assets/alefba-group.png'), linear-gradient(to bottom, #00B5A0, #00C69B)",
+                    backgroundImage: "url('/images/alefba-group.png'), linear-gradient(to bottom, #00B5A0, #00C69B)",
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
                     backgroundPosition: "center",
