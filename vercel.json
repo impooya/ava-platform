@@ -1,3 +1,9 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" },
+    {
+      "source": "/api/(.*)",
+      "destination": "https://harf.roshan-ai.ir/api/$1"
+    }
+  ]
 }

@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface AudioState {
   time: number;
-  currentPlayingId: string | null; // Track which audio is currently playing
+  currentPlayingId: string | null;
 }
 
 const initialState: AudioState = {

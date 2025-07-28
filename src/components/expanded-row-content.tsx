@@ -78,14 +78,14 @@ export const ExpandedRowContent = memo(({
                                             <div className="gap-x-[17px] flex justify-center items-center">
                                                 <span className={`
                                                         ${isActive
-                                                        ? 'text-[#00B3A1]  font-iranyekan-medium'
+                                                        ? 'text-[#118AD3]  font-iranyekan-medium'
                                                         : ''
                                                     }
                                                     transition-all duration-300`}>{formatDuration(seg.start)}</span>
                                                 <span
                                                     className={`
                                                         ${isActive
-                                                            ? 'text-[#00B3A1]  font-iranyekan-medium'
+                                                            ? 'text-[#118AD3]  font-iranyekan-medium'
                                                             : ''
                                                         }
                                                         transition-all duration-300
@@ -94,7 +94,7 @@ export const ExpandedRowContent = memo(({
                                             </div>
                                             <span className={`
                                                     ${isActive
-                                                    ? 'text-[#00B3A1]  font-iranyekan-medium'
+                                                    ? 'text-[#118AD3]  font-iranyekan-medium'
                                                     : ''
                                                 }
                                                 transition-all duration-300

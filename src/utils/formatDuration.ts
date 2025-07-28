@@ -10,5 +10,5 @@ export const formatDuration = (durationStr: string): string => {
   const date = new Date(0, 0, 0, hours, minutes, seconds);
 
   // Format to HH:mm:ss
-  return format(date, "HH:mm:ss");
+  return format(date, "mm:ss");
 };
