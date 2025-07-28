@@ -3,7 +3,7 @@
     { "source": "/(.*)", "destination": "/" },
     {
       "source": "/api/(.*)",
-      "destination": "https://harf.roshan-ai.ir/api/$1"
+      "destination": "https://harf.roshan-ai.ir/api"
     }
   ]
 }
