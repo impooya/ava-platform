@@ -23,6 +23,7 @@ export function downloadDocx(segments: Segment[], filename = "document.docx") {
                 size: 24, // 12pt
               }),
             ],
+            alignment: "right",
           }),
         ],
       },
